@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">APItesting</string>
+    <string name="title_activity_maps">CreateSite</string>
+    <string name="my_map_api_key">AIzaSyBUEMPMoMuAyw39__ZrO5smbDU6ECf95Jg</string>
+    <string name="title_activity_join_site">JoinSite</string>
+</resources>
