@@ -71,7 +71,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
     @Override
     protected void onResume(){
         super.onResume();
-        new JoinSite.GetAllSites().execute();
+        new GetAllSites().execute();
     }
 
     //  GET DATA
@@ -92,6 +92,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
                     Double site_latitudes = jsonObject.getDouble("site_latitude");
                     Double site_longitudes = jsonObject.getDouble("site_longitude");
                     String owners = jsonObject.getString("owner");
+                    String siteId = jsonObject.getString("id");
 
                     LatLng siteLatLng = new LatLng(site_latitudes, site_longitudes);
                     Log.d("Marker Coordinates", "Lat: " + site_latitudes + ", Lng: " + site_longitudes);
@@ -102,37 +103,9 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
                             .title(names)
                             .snippet("Owner: " + owners);
 
-                    // Custom InfoWindow
-                    mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                        @Override
-                        public View getInfoWindow(Marker marker) {
-                            return null; // Use the default InfoWindow frame
-                        }
-
-                        @Override
-                        public View getInfoContents(Marker marker) {
-                            // Inflate the custom InfoWindow layout
-                            View view = getLayoutInflater().inflate(R.layout.custom_marker_window, null);
-
-                            // Find views in the layout
-                            TextView titleTextView = view.findViewById(R.id.infoWindowTitle);
-                            TextView snippetTextView = view.findViewById(R.id.infoWindowSnippet);
-                            Button button = view.findViewById(R.id.infoWindowButton);
-
-                            // Set data to views
-                            titleTextView.setText(marker.getTitle());
-                            snippetTextView.setText(marker.getSnippet());
-
-                            // Set a click listener for the button
-                            button.setOnClickListener(v -> {
-                                Intent intent = new Intent(JoinSite.this, Home.class);
-                                startActivity(intent);
-                                Toast.makeText(JoinSite.this, "Button Clicked", Toast.LENGTH_SHORT).show();
-                            });
-                            return view;
-                        }
-                    });
-                    mMap.addMarker(markerOptions).showInfoWindow();
+                    // Set the ID as a tag
+                    Marker marker = mMap.addMarker(markerOptions);
+                    marker.setTag(siteId);
                 }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -179,5 +152,42 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        // Custom InfoWindow
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null; // Use the default InfoWindow frame
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                // Inflate the custom InfoWindow layout
+                View view = getLayoutInflater().inflate(R.layout.custom_marker_window, null);
+
+                // Find views in the layout
+                TextView titleTextView = view.findViewById(R.id.infoWindowTitle);
+                TextView snippetTextView = view.findViewById(R.id.infoWindowSnippet);
+
+                // Set data to views
+                titleTextView.setText(marker.getTitle());
+                snippetTextView.setText(marker.getSnippet());
+
+                return view;
+            }
+        });
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                // Handle the info window click here
+                String siteId = (String) marker.getTag();
+                Intent intent = new Intent(JoinSite.this, JoinPage.class);
+                intent.putExtra("siteId", siteId);
+                startActivity(intent);
+                Toast.makeText(JoinSite.this, "Site ID: " + siteId, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
 }

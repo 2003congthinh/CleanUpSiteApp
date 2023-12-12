@@ -20,6 +20,7 @@ public class Home extends AppCompatActivity {
 
         TextView Account = findViewById(R.id.account_text);
         CardView CreateSite = findViewById(R.id.createSite);
+        CardView ManageSites = findViewById(R.id.manageSites);
         CardView JoinSite = findViewById(R.id.joinSite);
         CardView Logout = findViewById(R.id.logout);
 
@@ -31,6 +32,14 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Home.this, CreateSite.class);
+                startActivity(intent);
+            }
+        });
+
+        ManageSites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Home.this, ManageSites.class);
                 startActivity(intent);
             }
         });

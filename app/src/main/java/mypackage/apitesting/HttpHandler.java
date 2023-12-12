@@ -281,4 +281,46 @@ public class HttpHandler {
 
         return builder.toString();
     }
+
+    public static String joinInSite(String id){
+        String status = "";
+        try {
+            // Step 1 - prepare the connection
+            URL url = new URL(URL + "/joinInSite");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+            // Step 2 - prepare the JSON object
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", id);
+            jsonObject.put("email", loginEmail);
+            // Step 3 - Writing data to the web service
+            try (DataOutputStream os = new DataOutputStream(conn.getOutputStream())) {
+                os.writeBytes(jsonObject.toString());
+                os.flush();
+            }
+            // Step 4 - Read the response code and message
+            int responseCode = conn.getResponseCode();
+            String responseMessage = conn.getResponseMessage();
+            // Handle the response appropriately
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Successfully connected
+                status = "Success: " + responseMessage;
+            } else {
+                // Handle other response codes
+                status = "Error - " + responseCode + ": " + responseMessage;
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            status = "Error - MalformedURLException: " + e.getMessage();
+        } catch (IOException e) {
+            e.printStackTrace();
+            status = "Error - IOException: " + e.getMessage();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            status = "Error - JSONException: " + e.getMessage();
+        }
+        return status;
+    }
 }

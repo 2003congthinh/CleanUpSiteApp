@@ -19,9 +19,9 @@
         android:layout_height="wrap_content"
         android:text="Title"/>
 
-    <Button
-        android:id="@+id/infoWindowButton"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go to Another Class"/>
+        android:text="Click here for more info"
+        android:textColor="@color/blue"/>
 </LinearLayout>

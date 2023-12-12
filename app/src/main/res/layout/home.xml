@@ -50,7 +50,7 @@
             android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/manage_sites"
+                android:id="@+id/manageSites"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_margin="20dp">
@@ -63,7 +63,7 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/joined_sites"
+                android:id="@+id/joinedSites"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_margin="20dp">

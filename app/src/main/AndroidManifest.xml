@@ -18,7 +18,12 @@
         android:theme="@style/Theme.APItesting"
         android:usesCleartextTraffic="true"
         tools:targetApi="34">
-
+        <activity
+            android:name=".ManageSites"
+            android:exported="false" />
+        <activity
+            android:name=".JoinPage"
+            android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
