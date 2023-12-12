@@ -50,7 +50,7 @@
             android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/map"
+                android:id="@+id/manage_sites"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_margin="20dp">
@@ -58,9 +58,28 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Useless Btn"
+                    android:text="Manage sites"
                     android:layout_gravity="center"/>
             </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/joined_sites"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Joined sites"
+                    android:layout_gravity="center"/>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/logout"

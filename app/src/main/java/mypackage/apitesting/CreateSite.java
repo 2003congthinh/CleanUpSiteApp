@@ -124,19 +124,19 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
         siteName = name.getText().toString();
         TextView locName = findViewById(R.id.locationName);
         locationName = locName.getText().toString();
+        TextView locLat = findViewById(R.id.locationLatitude);
+        String siteLat = locLat.getText().toString();
+        TextView locLng = findViewById(R.id.locationLongitude);
+        String siteLng = locLng.getText().toString();
+        try {
+            siteLatitude = Double.parseDouble(siteLat);
+            siteLongitude = Double.parseDouble(siteLng);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(CreateSite.this, siteLatitude + ";" + siteLongitude,Toast.LENGTH_SHORT).show();
         if(locationName != null && siteLatitude == 0.0 && siteLongitude == 0.0){
             textToLatLng();
-        } else if (locationName == null && siteLatitude != 0.0 && siteLongitude != 0.0) {
-            TextView locLat = findViewById(R.id.locationLatitude);
-            String siteLat = locLat.getText().toString();
-            TextView locLng = findViewById(R.id.locationLongitude);
-            String siteLng = locLng.getText().toString();
-            try {
-                siteLatitude = Double.parseDouble(siteLat);
-                siteLongitude = Double.parseDouble(siteLng);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
         }
         new PostSite().execute();
     }
