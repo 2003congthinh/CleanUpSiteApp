@@ -226,7 +226,6 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
     }
 
     private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
-
         View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
         ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
         markerImageView.setImageResource(resId);
@@ -235,10 +234,6 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
         customMarkerView.buildDrawingCache();
         Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(returnedBitmap);
-        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
-        Drawable drawable = customMarkerView.getBackground();
-        if (drawable != null)
-            drawable.draw(canvas);
         customMarkerView.draw(canvas);
         return returnedBitmap;
     }

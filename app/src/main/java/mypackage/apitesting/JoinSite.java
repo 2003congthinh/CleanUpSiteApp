@@ -1,5 +1,5 @@
 package mypackage.apitesting;
-
+// Source
 import android.Manifest;
 
 import androidx.annotation.DrawableRes;
@@ -36,6 +36,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -60,12 +67,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import mypackage.apitesting.databinding.JoinSiteBinding;
 
-public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
+public class JoinSite extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, RoutingListener {
+    private LatLng curLoc;
+    private LatLng siteLatLng;
     private String location = "";
     private GoogleMap mMap;
     private JoinSiteBinding binding;
@@ -79,8 +89,8 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
 
     private Spinner numberFilter;
 
-    // Store the Polyline object to manage and remove it later
-    private Polyline currentPolyline;
+    //polyline object
+    private List<Polyline> polylines=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +161,11 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
         new GetAllSites().execute();
     }
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
     //  GET DATA
     private class GetAllSites extends AsyncTask<Void, Void, Void> {
         @Override
@@ -207,11 +222,13 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
                     Double site_latitudes = jsonObject.getDouble("site_latitude");
                     Double site_longitudes = jsonObject.getDouble("site_longitude");
 
-                    LatLng siteLatLng = new LatLng(site_latitudes, site_longitudes);
+                    siteLatLng = new LatLng(site_latitudes, site_longitudes);
                     Log.d("Marker Coordinates", "Lat: " + site_latitudes + ", Lng: " + site_longitudes);
 
                     // Find site
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(siteLatLng, 10));
+                    // Add polyline
+                    Findroutes(curLoc, siteLatLng);
                 }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -219,8 +236,78 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
-    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
+    public void Findroutes(LatLng Start, LatLng End)
+    {
+        if(Start==null || End==null) {
+            Toast.makeText(JoinSite.this,"Unable to get location",Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            Routing routing = new Routing.Builder()
+                    .travelMode(AbstractRouting.TravelMode.DRIVING)
+                    .withListener((RoutingListener) JoinSite.this)
+                    .alternativeRoutes(true)
+                    .waypoints(Start, End)
+                    .key("AIzaSyBUEMPMoMuAyw39__ZrO5smbDU6ECf95Jg")  //also define your api key here.
+                    .build();
+            routing.execute();
+        }
+    }
 
+    //Routing call back functions.
+    @Override
+    public void onRoutingFailure(RouteException e) {
+        View parentLayout = findViewById(android.R.id.content);
+        Snackbar snackbar= Snackbar.make(parentLayout, e.toString(), Snackbar.LENGTH_LONG);
+        snackbar.show();
+//        Findroutes(start,end);
+    }
+
+    @Override
+    public void onRoutingStart() {
+        Toast.makeText(JoinSite.this,"Finding Route...",Toast.LENGTH_LONG).show();
+    }
+
+    //If Route finding success..
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+
+        if(polylines!=null) {
+            polylines.clear();
+        }
+        PolylineOptions polyOptions = new PolylineOptions();
+        LatLng polylineStartLatLng=null;
+        LatLng polylineEndLatLng=null;
+
+
+        polylines = new ArrayList<>();
+        //add route(s) to the map using polyline
+        for (int i = 0; i <route.size(); i++) {
+
+            if(i==shortestRouteIndex)
+            {
+                polyOptions.color(getResources().getColor(R.color.green));
+                polyOptions.width(7);
+                polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
+                Polyline polyline = mMap.addPolyline(polyOptions);
+                polylineStartLatLng=polyline.getPoints().get(0);
+                int k=polyline.getPoints().size();
+                polylineEndLatLng=polyline.getPoints().get(k-1);
+                polylines.add(polyline);
+            }
+            else {
+            }
+
+        }
+
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+//        Findroutes(start,end);
+    }
+
+    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
         View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
         ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
         markerImageView.setImageResource(resId);
@@ -229,10 +316,6 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
         customMarkerView.buildDrawingCache();
         Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(returnedBitmap);
-        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
-        Drawable drawable = customMarkerView.getBackground();
-        if (drawable != null)
-            drawable.draw(canvas);
         customMarkerView.draw(canvas);
         return returnedBitmap;
     }
@@ -252,7 +335,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback {
         mMap = googleMap;
 
         // show cur loc
-        LatLng curLoc = new LatLng(curLatitude, curLongitude);
+        curLoc = new LatLng(curLatitude, curLongitude);
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(curLoc)
                 .title("My loc")
