@@ -1,13 +1,22 @@
 package mypackage.apitesting;
 
+import androidx.annotation.DrawableRes;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ImageView;
@@ -18,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -31,7 +41,7 @@ import org.json.JSONObject;
 import mypackage.apitesting.databinding.CreateSiteBinding;
 
 public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
-
+    public String homeName = "";
     private String siteName = null;
     private String locationName = null;
     private double siteLatitude;
@@ -58,6 +68,8 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
         CardView setVisible = findViewById(R.id.visible);
         CardView createSite = findViewById(R.id.createSite);
         ImageView backBtn = findViewById(R.id.backBtn);
+
+        homeName = getIntent().getStringExtra("ownerName");
 
         setVisible.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +146,6 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
-        Toast.makeText(CreateSite.this, siteLatitude + ";" + siteLongitude,Toast.LENGTH_SHORT).show();
         if(locationName != null && siteLatitude == 0.0 && siteLongitude == 0.0){
             textToLatLng();
         }
@@ -160,7 +171,7 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
     private class PostSite extends AsyncTask<Void,Void,Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            status = HttpHandler.postRequestCreateSite(siteName,siteLatitude,siteLongitude);
+            status = HttpHandler.postRequestCreateSite(siteName,siteLatitude,siteLongitude,homeName);
             return null;
         }
         @Override
@@ -168,6 +179,9 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
             Log.d("Create site", "Status: " + status);
             if(status.equals("Success: OK")){
                 Toast.makeText(CreateSite.this, status, Toast.LENGTH_SHORT).show();
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             } else {
                 Toast.makeText(CreateSite.this, "Something's wrong", Toast.LENGTH_SHORT).show();
             }
@@ -178,7 +192,7 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
     private class GetSites extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids){
-            jsonString = HttpHandler.getMySite();
+            jsonString = HttpHandler.getMySite(homeName);
             return null;
         }
 
@@ -200,7 +214,8 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
                     MarkerOptions markerOptions = new MarkerOptions()
                             .position(siteLatLng)
                             .title(names)
-                            .snippet("Owner: " + owners);
+                            .snippet("Owner: " + owners)
+                            .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.tick)));
 
                     mMap.addMarker(markerOptions);
                 }
@@ -208,6 +223,24 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
+
+        View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
+        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
+        markerImageView.setImageResource(resId);
+        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+        customMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Drawable drawable = customMarkerView.getBackground();
+        if (drawable != null)
+            drawable.draw(canvas);
+        customMarkerView.draw(canvas);
+        return returnedBitmap;
     }
 
     /**

@@ -1,111 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Home">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center_horizontal">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/createSite"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_margin="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Create site"
-                    android:layout_gravity="center"/>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/joinSite"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_margin="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Join site"
-                    android:layout_gravity="center"/>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/manageSites"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_margin="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Manage sites"
-                    android:layout_gravity="center"/>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/joinedSites"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_margin="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Joined sites"
-                    android:layout_gravity="center"/>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/logout"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_margin="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Log out"
-                    android:layout_gravity="center"/>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
+    <!-- Header with account_text -->
+    <RelativeLayout
+        android:id="@+id/headerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/headerHome"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@drawable/header_home">
+        </View>
 
         <TextView
             android:id="@+id/account_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
-            android:layout_gravity="center"
-            android:text="No account >:("/>
+            android:text="No account >:("
+            android:textColor="#FFFFFF"/>
 
-        <!--        <ListView-->
-<!--            android:id="@+id/list"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent" />-->
-    </LinearLayout>
-</ScrollView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/logout"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="280dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Log out" />
+            </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+
+    <!-- Content with circleView and CardViews -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headerContainer">
+
+        <View
+            android:id="@+id/circleView"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/home_center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/broom"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <ImageView
+            android:layout_width="270dp"
+            android:layout_height="270dp"
+            android:src="@drawable/leaf"
+            app:layout_constraintCircle="@+id/circleView"
+            app:layout_constraintCircleRadius="115dp"
+            app:layout_constraintCircleAngle="330"
+            app:layout_constraintStart_toStartOf="@+id/circleView"
+            app:layout_constraintTop_toTopOf="@+id/circleView"
+            android:rotation="-130"/>
+
+        <!-- CreateSite CardView -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/createSite"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintCircle="@+id/circleView"
+            app:layout_constraintCircleRadius="130dp"
+            app:layout_constraintCircleAngle="30"
+            app:layout_constraintStart_toStartOf="@+id/circleView"
+            app:layout_constraintTop_toTopOf="@+id/circleView"
+            app:cardCornerRadius="50dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Create site" />
+        </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:layout_width="270dp"
+            android:layout_height="270dp"
+            android:src="@drawable/leaf"
+            app:layout_constraintCircle="@+id/circleView"
+            app:layout_constraintCircleRadius="115dp"
+            app:layout_constraintCircleAngle="240"
+            app:layout_constraintStart_toStartOf="@+id/circleView"
+            app:layout_constraintTop_toTopOf="@+id/circleView"
+            android:rotation="140"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/joinedSites"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintCircle="@+id/circleView"
+            app:layout_constraintCircleRadius="130dp"
+            app:layout_constraintCircleAngle="120"
+            app:layout_constraintStart_toStartOf="@+id/circleView"
+            app:layout_constraintTop_toTopOf="@+id/circleView"
+            android:layout_margin="20dp"
+            app:cardCornerRadius="50dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Joined sites" />
+        </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:layout_width="270dp"
+            android:layout_height="270dp"
+            android:src="@drawable/leaf"
+            app:layout_constraintCircle="@+id/circleView"
+            app:layout_constraintCircleRadius="115dp"
+            app:layout_constraintCircleAngle="150"
+            app:layout_constraintStart_toStartOf="@+id/circleView"
+            app:layout_constraintTop_toTopOf="@+id/circleView"
+            android:rotation="50"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/manageSites"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintCircle="@+id/circleView"
+            app:layout_constraintCircleRadius="130dp"
+            app:layout_constraintCircleAngle="210"
+            app:layout_constraintStart_toStartOf="@+id/circleView"
+            app:layout_constraintTop_toTopOf="@+id/circleView"
+            android:layout_margin="20dp"
+            app:cardCornerRadius="50dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Manage sites" />
+        </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:layout_width="270dp"
+            android:layout_height="270dp"
+            android:src="@drawable/leaf"
+            app:layout_constraintCircle="@+id/circleView"
+            app:layout_constraintCircleRadius="115dp"
+            app:layout_constraintCircleAngle="60"
+            app:layout_constraintStart_toStartOf="@+id/circleView"
+            app:layout_constraintTop_toTopOf="@+id/circleView"
+            android:rotation="320"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/joinSite"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintCircle="@+id/circleView"
+            app:layout_constraintCircleRadius="130dp"
+            app:layout_constraintCircleAngle="300"
+            app:layout_constraintStart_toStartOf="@+id/circleView"
+            app:layout_constraintTop_toTopOf="@+id/circleView"
+            android:layout_margin="20dp"
+            app:cardCornerRadius="50dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Join site" />
+        </androidx.cardview.widget.CardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

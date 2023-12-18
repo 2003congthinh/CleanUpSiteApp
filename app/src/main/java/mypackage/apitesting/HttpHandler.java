@@ -1,5 +1,5 @@
 package mypackage.apitesting;
-
+// All of POST and GET functions are from Week 4
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,6 +13,7 @@ import java.net.URL;
 
 public class HttpHandler {
     public static String loginEmail = "";
+//    public static String homeName = Home.name;
     static String URL = "https://elegant-dove-sombrero.cyclic.app";
 //GET
     public static String getRequest(){
@@ -138,7 +139,7 @@ public class HttpHandler {
         return status;
     }
 
-    public static String postRequestCreateSite(String siteName, double siteLatitude, double siteLongitude){
+    public static String postRequestCreateSite(String siteName, double siteLatitude, double siteLongitude, String owner){
         String status = "";
         try {
             // Step 1 - prepare the connection
@@ -152,7 +153,7 @@ public class HttpHandler {
             jsonObject.put("name", siteName);
             jsonObject.put("site_latitude", siteLatitude);
             jsonObject.put("site_longitude", siteLongitude);
-            jsonObject.put("owner", loginEmail);
+            jsonObject.put("owner", owner);
             // Step 3 - Writing data to the web service
             try (DataOutputStream os = new DataOutputStream(conn.getOutputStream())) {
                 os.writeBytes(jsonObject.toString());
@@ -182,7 +183,7 @@ public class HttpHandler {
         return status;
     }
 
-    public static String getMySite() {
+    public static String getMySite(String owner) {
         StringBuilder builder = new StringBuilder();
         try {
             // Step 1 - prepare the connection
@@ -194,7 +195,7 @@ public class HttpHandler {
 
             // Step 2 - prepare the JSON object
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("owner", loginEmail);
+            jsonObject.put("owner", owner);
 
             // Step 3 - Writing data to the web service
             try (DataOutputStream os = new DataOutputStream(conn.getOutputStream())) {
@@ -282,7 +283,7 @@ public class HttpHandler {
         return builder.toString();
     }
 
-    public static String joinInSite(String id){
+    public static String joinInSite(String id, String name){
         String status = "";
         try {
             // Step 1 - prepare the connection
@@ -294,7 +295,7 @@ public class HttpHandler {
             // Step 2 - prepare the JSON object
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", id);
-            jsonObject.put("email", loginEmail);
+            jsonObject.put("name", name);
             // Step 3 - Writing data to the web service
             try (DataOutputStream os = new DataOutputStream(conn.getOutputStream())) {
                 os.writeBytes(jsonObject.toString());
@@ -322,5 +323,105 @@ public class HttpHandler {
             status = "Error - JSONException: " + e.getMessage();
         }
         return status;
+    }
+
+    public static String getAccount(String email) {
+        StringBuilder builder = new StringBuilder();
+        try {
+            // Step 1 - prepare the connection
+            URL url = new URL(URL + "/getAccount");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+
+            // Step 2 - prepare the JSON object
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("email", email);
+
+            // Step 3 - Writing data to the web service
+            try (DataOutputStream os = new DataOutputStream(conn.getOutputStream())) {
+                os.writeBytes(jsonObject.toString());
+                os.flush();
+            }
+
+            // Step 4 - Read the response code and message
+            int responseCode = conn.getResponseCode();
+            String responseMessage = conn.getResponseMessage();
+
+            // Handle the response appropriately
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Successfully connected
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+            } else {
+                // Handle other response codes
+                builder.append("Error - ").append(responseCode).append(": ").append(responseMessage);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            builder.append("Error - MalformedURLException: ").append(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            builder.append("Error - IOException: ").append(e.getMessage());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            builder.append("Error - JSONException: ").append(e.getMessage());
+        }
+
+        return builder.toString();
+    }
+
+    public static String getSiteDetails(String id) {
+        StringBuilder builder = new StringBuilder();
+        try {
+            // Step 1 - prepare the connection
+            URL url = new URL(URL + "/getSiteDetails");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+
+            // Step 2 - prepare the JSON object
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", id);
+
+            // Step 3 - Writing data to the web service
+            try (DataOutputStream os = new DataOutputStream(conn.getOutputStream())) {
+                os.writeBytes(jsonObject.toString());
+                os.flush();
+            }
+
+            // Step 4 - Read the response code and message
+            int responseCode = conn.getResponseCode();
+            String responseMessage = conn.getResponseMessage();
+
+            // Handle the response appropriately
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Successfully connected
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+            } else {
+                // Handle other response codes
+                builder.append("Error - ").append(responseCode).append(": ").append(responseMessage);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            builder.append("Error - MalformedURLException: ").append(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            builder.append("Error - IOException: ").append(e.getMessage());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            builder.append("Error - JSONException: ").append(e.getMessage());
+        }
+
+        return builder.toString();
     }
 }

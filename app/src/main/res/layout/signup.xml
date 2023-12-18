@@ -8,39 +8,50 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="center">
         <EditText
             android:id="@+id/email"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:layout_margin="10dp"
             android:hint="Email"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:layout_gravity="center"/>
         <EditText
             android:id="@+id/name"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:layout_margin="10dp"
             android:hint="How do you want to be addressed?"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:layout_gravity="center"/>
         <EditText
             android:id="@+id/password"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:layout_margin="10dp"
             android:hint="Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:layout_gravity="center"/>
         <Button
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:text="Sign Up"
-            android:onClick="goToHome"/>
+            android:onClick="goToHome"
+            android:layout_gravity="center"/>
         <Button
             android:id="@+id/goToLoginBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:text="Already have an account?"
-            android:onClick="goToLogin"/>
+            android:onClick="goToLogin"
+            android:layout_gravity="center"/>
     </LinearLayout>
 </ScrollView>

@@ -14,11 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManageSites extends AppCompatActivity {
+    public String homeName = "";
     TextView list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manage_sites);
+
+        homeName = getIntent().getStringExtra("ownerName");
 
         list = findViewById(R.id.siteList);
     }
@@ -36,7 +39,7 @@ public class ManageSites extends AppCompatActivity {
 
             try {
                 // Make the HTTP request using HttpHandler
-                String jsonResponse = HttpHandler.getMySite();
+                String jsonResponse = HttpHandler.getMySite(homeName);
 
                 // Parse the JSON response
                 JSONArray jsonArray = new JSONArray(jsonResponse);
@@ -44,16 +47,23 @@ public class ManageSites extends AppCompatActivity {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     String siteName = jsonObject.getString("name");
-                    String joinedPeople = jsonObject.getJSONArray("joined_people").toString();
+                    JSONArray joinedPeopleArray = jsonObject.getJSONArray("joined_people");
 
                     // Create a string with site information
-                    String siteInfo = "Site Name: " + siteName + "\nJoined People: " + joinedPeople;
-                    siteInfoList.add(siteInfo);
+                    StringBuilder siteInfoBuilder = new StringBuilder();
+                    siteInfoBuilder.append("Site Name: ").append(siteName).append("\nJoined People:\n");
+
+                    // Iterate over joinedPeopleArray and append each person to the string
+                    for (int j = 0; j < joinedPeopleArray.length(); j++) {
+                        String joinedPerson = joinedPeopleArray.getString(j);
+                        siteInfoBuilder.append("- ").append(joinedPerson).append("\n");
+                    }
+
+                    siteInfoList.add(siteInfoBuilder.toString());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             return siteInfoList;
         }
 

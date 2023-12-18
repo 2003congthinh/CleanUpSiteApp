@@ -1,6 +1,12 @@
 <resources>
-    <string name="app_name">APItesting</string>
+    <string name="app_name">CleanUpSite</string>
     <string name="title_activity_maps">CreateSite</string>
     <string name="my_map_api_key">AIzaSyBUEMPMoMuAyw39__ZrO5smbDU6ECf95Jg</string>
     <string name="title_activity_join_site">JoinSite</string>
+    <string-array name="number_array">
+        <item>All</item>
+        <item>0 to 5 people</item>
+        <item>5 to 10 people</item>
+        <item>More than 10 people</item>
+    </string-array>
 </resources>
