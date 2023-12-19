@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">CleanUpSite</string>
     <string name="title_activity_maps">CreateSite</string>
-    <string name="my_map_api_key">AIzaSyBUEMPMoMuAyw39__ZrO5smbDU6ECf95Jg</string>
+    <string name="my_map_api_key">AIzaSyB_sIZ6bziC7B8OVm8o6AuCrEcJXFbSKk0</string>
     <string name="title_activity_join_site">JoinSite</string>
     <string-array name="number_array">
         <item>All</item>

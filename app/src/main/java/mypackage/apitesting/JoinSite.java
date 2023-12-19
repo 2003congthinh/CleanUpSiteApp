@@ -248,7 +248,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
                     .withListener((RoutingListener) JoinSite.this)
                     .alternativeRoutes(true)
                     .waypoints(Start, End)
-                    .key("AIzaSyBUEMPMoMuAyw39__ZrO5smbDU6ECf95Jg")  //also define your api key here.
+                    .key("AIzaSyB_sIZ6bziC7B8OVm8o6AuCrEcJXFbSKk0")  //also define your api key here.
                     .build();
             routing.execute();
         }
@@ -271,8 +271,11 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
     //If Route finding success..
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
-
-        if(polylines!=null) {
+        if(polylines != null) {
+            // Clear previous polylines
+            for (Polyline polyline : polylines) {
+                polyline.remove();
+            }
             polylines.clear();
         }
         PolylineOptions polyOptions = new PolylineOptions();
