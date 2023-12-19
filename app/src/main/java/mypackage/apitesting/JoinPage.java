@@ -73,16 +73,6 @@ public class JoinPage extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             if (status.equals("Success: OK")) {
                 Toast.makeText(JoinPage.this, status, Toast.LENGTH_SHORT).show();
-//                NotificationCompat.Builder builder = new NotificationCompat.Builder(JoinPage.this, "C.U.S")
-//                        .setSmallIcon(R.drawable.broom)
-//                        .setContentTitle("Join Site")
-//                        .setContentText("Congrats, you have joined " + owner + "'s " + "site: " + name + ".")
-//                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-//                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(JoinPage.this);
-//                if (ActivityCompat.checkSelfPermission(JoinPage.this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-//                    return;
-//                }
-//                notificationManager.notify(1, builder.build());
                 Notification notification = new NotificationCompat.Builder(JoinPage.this, "C.U.S")
                         .setSmallIcon(R.drawable.broom)
                         .setContentTitle("Join Site")
@@ -123,18 +113,6 @@ public class JoinPage extends AppCompatActivity {
     }
 
     // Create a notification channel
-//    private void createNotificationChannel() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            CharSequence name = "My Notification Channel";
-//            String description = "Channel description";
-//            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-//            NotificationChannel channel = new NotificationChannel("C.U.S", name, importance);
-//            channel.setDescription(description);
-//
-//            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-//            notificationManager.createNotificationChannel(channel);
-//        }
-//    }
     private void createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel1 = new NotificationChannel(

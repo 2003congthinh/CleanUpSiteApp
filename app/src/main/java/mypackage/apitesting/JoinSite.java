@@ -1,5 +1,5 @@
 package mypackage.apitesting;
-// Source
+// Draw polylines functions are from Hmaza-Amir, git link: https://github.com/hamza-ameer/GoogleMaps-Find-Routes/blob/Updated/Google%20Maps%20Routes%20finding%20Guide.txt
 import android.Manifest;
 
 import androidx.annotation.DrawableRes;
