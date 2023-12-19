@@ -61,6 +61,7 @@ public class Home extends AppCompatActivity {
         CardView CreateSite = findViewById(R.id.createSite);
         CardView ManageSites = findViewById(R.id.manageSites);
         CardView JoinSite = findViewById(R.id.joinSite);
+        CardView JoinedSites = findViewById(R.id.joinedSites);
         CardView Logout = findViewById(R.id.logout);
 
         CreateSite.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +94,15 @@ public class Home extends AppCompatActivity {
                 } else {
                     Toast.makeText(Home.this, "Location not available", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        JoinedSites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Home.this, JoinedSites.class);
+                intent.putExtra("joinerName", name);
+                startActivity(intent);
             }
         });
 
@@ -144,15 +154,7 @@ public class Home extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION);
             return;
         }
-//        Task<Location> task = fusedLocationProviderClient.getLastLocation();
-//        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-//            @Override
-//            public void onSuccess(Location location) {
-//                if(location != null) {
-//                    cur_loc = location;
-//                }
-//            }
-//        });
+
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, location -> {
@@ -161,50 +163,6 @@ public class Home extends AppCompatActivity {
                     }
                 });
     }
-
-//    public void getLastLocation() {
-//        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION);
-//            return;
-//        }
-//
-//        LocationRequest locationRequest = LocationRequest.create();
-//        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//
-//        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-//                .addLocationRequest(locationRequest);
-//
-//        Task<LocationSettingsResponse> result =
-//                LocationServices.getSettingsClient(this).checkLocationSettings(builder.build());
-//
-//        result.addOnCompleteListener(task -> {
-//            try {
-//                LocationSettingsResponse response = task.getResult(ApiException.class);
-//
-//                // All location settings are satisfied. Call getLastLocation().
-//                FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-//                fusedLocationClient.getLastLocation()
-//                        .addOnSuccessListener(this, location -> {
-//                            if (location != null) {
-//                                cur_loc = location;
-//                            }
-//                        });
-//
-//            } catch (ApiException exception) {
-//                // Prompt the user to enable location services.
-//                if (exception.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
-//                    // Location settings are not satisfied. Show the user a dialog to upgrade location settings.
-//                    try {
-//                        ResolvableApiException resolvable = (ResolvableApiException) exception;
-//                        resolvable.startResolutionForResult(this, REQUEST_CHECK_SETTINGS);
-//                    } catch (IntentSender.SendIntentException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
-//    }
-
 
     @Override
     public void onRequestPermissionsResult(

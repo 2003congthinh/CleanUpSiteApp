@@ -1,9 +1,14 @@
 package mypackage.apitesting;
 // Draw polylines functions are from Hmaza-Amir, git link: https://github.com/hamza-ameer/GoogleMaps-Find-Routes/blob/Updated/Google%20Maps%20Routes%20finding%20Guide.txt
+// Create custome marker are from
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.Manifest;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -80,6 +85,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
     private GoogleMap mMap;
     private JoinSiteBinding binding;
     private String jsonString = "";
+    private String jsonStringSearch = "";
 
     // Get cur loc
     double curLatitude = 0.0;
@@ -127,7 +133,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
         numberFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //filterCardViews();
+                filterMarkers();
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -140,7 +146,6 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
             public boolean onQueryTextSubmit(String query) {
                 location = searchView.getQuery().toString();
                 new GetSearchSite().execute();
-                Toast.makeText(JoinSite.this, "bahaha", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
@@ -206,17 +211,91 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
         }
     }
 
+    private void filterMarkers() {
+        // Get the selected items from the spinner
+        String selectedNumber = numberFilter.getSelectedItem().toString();
+        if (selectedNumber.equals("All")) {
+            // Show all markers
+            new GetAllSites().execute();
+        } else {
+            // Filter markers based on the selected number
+            int minPeople, maxPeople;
+
+            switch (selectedNumber) {
+                case "0 to 5 people":
+                    minPeople = 0;
+                    maxPeople = 5;
+                    break;
+                case "5 to 10 people":
+                    minPeople = 5;
+                    maxPeople = 10;
+                    break;
+                case "More than 10 people":
+                    minPeople = 10;
+                    maxPeople = Integer.MAX_VALUE; // Assuming there is no upper limit
+                    break;
+                default:
+                    return; // Invalid selection
+            }
+
+            // Clear the map
+            mMap.clear();
+
+            // show cur loc
+            curLoc = new LatLng(curLatitude, curLongitude);
+            MarkerOptions curOptions = new MarkerOptions()
+                    .position(curLoc)
+                    .title("My loc")
+                    .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.person)));
+            mMap.addMarker(curOptions);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 15));
+
+            // Add markers based on the filter criteria
+            try {
+                JSONArray jsonArray = new JSONArray(jsonString);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String names = jsonObject.getString("name");
+                    Double siteLatitude = jsonObject.getDouble("site_latitude");
+                    Double siteLongitude = jsonObject.getDouble("site_longitude");
+                    String owners = jsonObject.getString("owner");
+                    String siteId = jsonObject.getString("id");
+                    int joinedPeopleCount = jsonObject.getJSONArray("joined_people").length();
+
+                    // Check if the joinedPeopleCount is within the selected range
+                    if (joinedPeopleCount >= minPeople && joinedPeopleCount <= maxPeople) {
+                        LatLng siteLatLng = new LatLng(siteLatitude, siteLongitude);
+
+                        // Add a marker for each site
+                        MarkerOptions markerOptions = new MarkerOptions()
+                                .position(siteLatLng)
+                                .title(names)
+                                .snippet("Owner: " + owners + "\nPeople Joined: " + joinedPeopleCount)
+                                .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.broom)));
+
+                        // Set the ID as a tag
+                        Marker marker = mMap.addMarker(markerOptions);
+                        marker.setTag(siteId);
+                    }
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
     private class GetSearchSite extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids){
-            jsonString = HttpHandler.getOneSite(location);
+            jsonStringSearch = HttpHandler.getOneSite(location);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void avoid){
             try {
-                JSONArray jsonArray = new JSONArray(jsonString);
+                JSONArray jsonArray = new JSONArray(jsonStringSearch);
                 for (int i =0; i < jsonArray.length(); i++){
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     Double site_latitudes = jsonObject.getDouble("site_latitude");
@@ -279,9 +358,6 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
             polylines.clear();
         }
         PolylineOptions polyOptions = new PolylineOptions();
-        LatLng polylineStartLatLng=null;
-        LatLng polylineEndLatLng=null;
-
 
         polylines = new ArrayList<>();
         //add route(s) to the map using polyline
@@ -293,9 +369,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
                 polyOptions.width(7);
                 polyOptions.addAll(route.get(shortestRouteIndex).getPoints());
                 Polyline polyline = mMap.addPolyline(polyOptions);
-                polylineStartLatLng=polyline.getPoints().get(0);
                 int k=polyline.getPoints().size();
-                polylineEndLatLng=polyline.getPoints().get(k-1);
                 polylines.add(polyline);
             }
             else {

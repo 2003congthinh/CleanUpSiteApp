@@ -424,4 +424,54 @@ public class HttpHandler {
 
         return builder.toString();
     }
+
+    public static String getSiteIJoined(String owner) {
+        StringBuilder builder = new StringBuilder();
+        try {
+            // Step 1 - prepare the connection
+            URL url = new URL(URL + "/getSitesIJoined");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+
+            // Step 2 - prepare the JSON object
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("owner", owner);
+
+            // Step 3 - Writing data to the web service
+            try (DataOutputStream os = new DataOutputStream(conn.getOutputStream())) {
+                os.writeBytes(jsonObject.toString());
+                os.flush();
+            }
+
+            // Step 4 - Read the response code and message
+            int responseCode = conn.getResponseCode();
+            String responseMessage = conn.getResponseMessage();
+
+            // Handle the response appropriately
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Successfully connected
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+            } else {
+                // Handle other response codes
+                builder.append("Error - ").append(responseCode).append(": ").append(responseMessage);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            builder.append("Error - MalformedURLException: ").append(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            builder.append("Error - IOException: ").append(e.getMessage());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            builder.append("Error - JSONException: ").append(e.getMessage());
+        }
+
+        return builder.toString();
+    }
 }

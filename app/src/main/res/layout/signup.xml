@@ -10,6 +10,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center">
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/broom"
+            android:layout_margin="10dp"
+            android:layout_gravity="center"/>
         <EditText
             android:id="@+id/email"
             android:layout_width="300dp"

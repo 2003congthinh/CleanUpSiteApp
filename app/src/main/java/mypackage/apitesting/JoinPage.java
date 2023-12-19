@@ -34,7 +34,9 @@ public class JoinPage extends AppCompatActivity {
     private int numbOfPeople;
 
     private NotificationManager notificationManager;
-    TextView text;
+    TextView text1;
+    TextView text2;
+    TextView text3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,9 @@ public class JoinPage extends AppCompatActivity {
         getIntent = getIntent().getStringExtra("siteId");
         joinName = getIntent().getStringExtra("joinName");
 
-        text = findViewById(R.id.text);
+        text1 = findViewById(R.id.text1);
+        text2 = findViewById(R.id.text2);
+        text3 = findViewById(R.id.text3);
 
         // Call this method to create the notification channel
         notificationManager = getSystemService(NotificationManager.class);
@@ -82,7 +86,7 @@ public class JoinPage extends AppCompatActivity {
                         .build();
                 notificationManager.notify(1, notification);
             } else {
-                Toast.makeText(JoinPage.this, "Something's wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(JoinPage.this, "Join in failed or you already have joined in", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -103,8 +107,12 @@ public class JoinPage extends AppCompatActivity {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     name = jsonObject.getString("name");
                     owner = jsonObject.getString("owner");
+                    JSONArray joinedPeopleArray = jsonObject.getJSONArray("joined_people");
+                    numbOfPeople = joinedPeopleArray.length();
                 }
-                text.setText("owner: " + owner + "\n" + "name: " + name);
+                text1.setText("This site was created by " + owner + ". The site was founded so that we can all enjoy our voluntary work together and keep the world clean of trash");
+                text2.setText("This wonderful place called " + name + ". Lets keep " + name + " squeacky clean");
+                text3.setText("Participants number: " + numbOfPeople);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
