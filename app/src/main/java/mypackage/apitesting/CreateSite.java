@@ -1,7 +1,8 @@
 package mypackage.apitesting;
-
+// Create custome marker are from Week 5
 import androidx.annotation.DrawableRes;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -46,6 +48,11 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
     private String locationName = null;
     private double siteLatitude;
     private double siteLongitude;
+
+    // Get cur loc
+    private LatLng curLoc;
+    double curLatitude = 0.0;
+    double curLongitude = 0.0;
 
     private GoogleMap mMap;
     private CreateSiteBinding binding;
@@ -69,7 +76,11 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
         CardView createSite = findViewById(R.id.createSite);
         ImageView backBtn = findViewById(R.id.backBtn);
 
-        homeName = getIntent().getStringExtra("ownerName");
+        // Get cur loc
+        Intent intent = getIntent();
+        curLatitude = intent.getDoubleExtra("latitude", 0.0);
+        curLongitude = intent.getDoubleExtra("longitude", 0.0);
+        homeName = intent.getStringExtra("ownerName");
 
         setVisible.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,7 +226,7 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
                             .position(siteLatLng)
                             .title(names)
                             .snippet("Owner: " + owners)
-                            .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.tick)));
+                            .icon(bitmapDescriptorFromVector(CreateSite.this, R.drawable.tick, 100, 100));
 
                     mMap.addMarker(markerOptions);
                 }
@@ -225,17 +236,13 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
-    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
-        View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
-        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
-        markerImageView.setImageResource(resId);
-        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
-        customMarkerView.buildDrawingCache();
-        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(returnedBitmap);
-        customMarkerView.draw(canvas);
-        return returnedBitmap;
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId, int width, int height) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, width, height);
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
     /**
@@ -250,7 +257,14 @@ public class CreateSite extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        // show cur loc
+        curLoc = new LatLng(curLatitude, curLongitude);
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(curLoc)
+                .title("My loc")
+                .icon(bitmapDescriptorFromVector(CreateSite.this, R.drawable.person, 100, 100));
+        mMap.addMarker(markerOptions);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 15));
 
     }
 

@@ -1,6 +1,6 @@
 package mypackage.apitesting;
 // Draw polylines functions are from Hmaza-Amir, git link: https://github.com/hamza-ameer/GoogleMaps-Find-Routes/blob/Updated/Google%20Maps%20Routes%20finding%20Guide.txt
-// Create custome marker are from
+// Create custome marker are from Week 5
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -10,6 +10,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
@@ -54,6 +55,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -199,7 +201,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
                             .position(siteLatLng)
                             .title(names)
                             .snippet("Owner: " + owners)
-                            .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.broom)));
+                            .icon(bitmapDescriptorFromVector(JoinSite.this, R.drawable.broom, 120, 120));
 
                     // Set the ID as a tag
                     Marker marker = mMap.addMarker(markerOptions);
@@ -246,7 +248,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
             MarkerOptions curOptions = new MarkerOptions()
                     .position(curLoc)
                     .title("My loc")
-                    .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.person)));
+                    .icon(bitmapDescriptorFromVector(JoinSite.this, R.drawable.person, 100, 100));
             mMap.addMarker(curOptions);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 15));
 
@@ -271,7 +273,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
                                 .position(siteLatLng)
                                 .title(names)
                                 .snippet("Owner: " + owners + "\nPeople Joined: " + joinedPeopleCount)
-                                .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.broom)));
+                                .icon(bitmapDescriptorFromVector(JoinSite.this, R.drawable.broom, 120, 120));
 
                         // Set the ID as a tag
                         Marker marker = mMap.addMarker(markerOptions);
@@ -305,7 +307,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
                     Log.d("Marker Coordinates", "Lat: " + site_latitudes + ", Lng: " + site_longitudes);
 
                     // Find site
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(siteLatLng, 10));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(siteLatLng, 15));
                     // Add polyline
                     Findroutes(curLoc, siteLatLng);
                 }
@@ -339,7 +341,6 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
         View parentLayout = findViewById(android.R.id.content);
         Snackbar snackbar= Snackbar.make(parentLayout, e.toString(), Snackbar.LENGTH_LONG);
         snackbar.show();
-//        Findroutes(start,end);
     }
 
     @Override
@@ -372,9 +373,6 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
                 int k=polyline.getPoints().size();
                 polylines.add(polyline);
             }
-            else {
-            }
-
         }
 
     }
@@ -384,17 +382,13 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
 //        Findroutes(start,end);
     }
 
-    private Bitmap getMarkerBitmapFromView(@DrawableRes int resId) {
-        View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
-        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.profile_image);
-        markerImageView.setImageResource(resId);
-        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
-        customMarkerView.buildDrawingCache();
-        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(returnedBitmap);
-        customMarkerView.draw(canvas);
-        return returnedBitmap;
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId, int width, int height) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, width, height);
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
     /**
@@ -416,7 +410,7 @@ public class JoinSite extends FragmentActivity implements OnMapReadyCallback, Go
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(curLoc)
                 .title("My loc")
-                .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.person)));
+                .icon(bitmapDescriptorFromVector(JoinSite.this, R.drawable.person, 100, 100));
         mMap.addMarker(markerOptions);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 15));
 

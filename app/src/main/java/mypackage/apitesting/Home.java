@@ -1,5 +1,5 @@
 package mypackage.apitesting;
-
+// Current location functions are from Week 5
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -21,11 +21,14 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -38,15 +41,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Home extends AppCompatActivity {
-    private static final int REQUEST_CHECK_SETTINGS = 1;
     private String jsonString = "";
     private String name = "";
     private String loginAccount = HttpHandler.loginEmail;
 
     // Get cur loc
-    private final int PERMISSION = 1;
     Location cur_loc;
-    FusedLocationProviderClient fusedLocationProviderClient;
+    protected FusedLocationProviderClient fusedLocationProviderClient;
+    protected LocationRequest mLocationRequest;
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private static final long UPDATE_INTERVAL = 20*1000 ;
+    private static final long FASTEST_INTERVAL = 10*1000 ;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -56,7 +61,9 @@ public class Home extends AppCompatActivity {
 
         // Get cur loc
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        getLastLocation();
+        requestPermission();
+        startLocationUpdate();
+
 
         CardView CreateSite = findViewById(R.id.createSite);
         CardView ManageSites = findViewById(R.id.manageSites);
@@ -69,6 +76,8 @@ public class Home extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(Home.this, CreateSite.class);
                 intent.putExtra("ownerName", name);
+                intent.putExtra("latitude", cur_loc.getLatitude());
+                intent.putExtra("longitude", cur_loc.getLongitude());
                 startActivity(intent);
             }
         });
@@ -148,32 +157,24 @@ public class Home extends AppCompatActivity {
             }
         }
     }
-
-    public void getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION);
-            return;
-        }
-
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, location -> {
-                    if (location != null) {
-                        cur_loc = location;
-                    }
-                });
+    private void requestPermission(){
+        ActivityCompat.requestPermissions(Home.this, new String[]{
+                        android.Manifest.permission.ACCESS_FINE_LOCATION},
+                MY_PERMISSIONS_REQUEST_LOCATION);
     }
 
-    @Override
-    public void onRequestPermissionsResult(
-        int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastLocation();
-            } else {
-                Toast.makeText(Home.this, "cur loc failed", Toast.LENGTH_SHORT).show();
+    @SuppressLint({"MissingPermission", "RestrictedApi"})
+    private void startLocationUpdate(){
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        fusedLocationProviderClient.requestLocationUpdates(mLocationRequest, new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult){
+                super.onLocationResult(locationResult);
+                cur_loc = locationResult.getLastLocation();
             }
-        }
+        }, null);
     }
 }
