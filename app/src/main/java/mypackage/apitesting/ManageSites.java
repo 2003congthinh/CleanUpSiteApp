@@ -38,10 +38,7 @@ public class ManageSites extends AppCompatActivity {
             List<String> siteInfoList = new ArrayList<>();
 
             try {
-                // Make the HTTP request using HttpHandler
                 String jsonResponse = HttpHandler.getMySite(homeName);
-
-                // Parse the JSON response
                 JSONArray jsonArray = new JSONArray(jsonResponse);
 
                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -49,7 +46,6 @@ public class ManageSites extends AppCompatActivity {
                     String siteName = jsonObject.getString("name");
                     JSONArray joinedPeopleArray = jsonObject.getJSONArray("joined_people");
 
-                    // Create a string with site information
                     StringBuilder siteInfoBuilder = new StringBuilder();
                     siteInfoBuilder.append("Site Name: ").append(siteName).append("\nJoined People:\n");
 

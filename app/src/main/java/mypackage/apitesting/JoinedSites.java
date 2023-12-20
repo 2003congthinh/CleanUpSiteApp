@@ -49,7 +49,6 @@ public class JoinedSites extends AppCompatActivity {
                     String siteName = jsonObject.getString("name");
                     JSONArray joinedPeopleArray = jsonObject.getJSONArray("joined_people");
 
-                    // Create a string with site information
                     StringBuilder siteInfoBuilder = new StringBuilder();
                     siteInfoBuilder.append("Site Name: ").append(siteName).append("\nJoined People:\n");
 

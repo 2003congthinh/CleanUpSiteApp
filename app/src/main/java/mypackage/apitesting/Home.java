@@ -170,7 +170,6 @@ public class Home extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, get the location
                 getLastLocation();
             } else {
                 Toast.makeText(Home.this, "cur loc failed", Toast.LENGTH_SHORT).show();
