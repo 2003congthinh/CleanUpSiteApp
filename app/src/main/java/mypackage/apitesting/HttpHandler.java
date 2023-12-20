@@ -13,9 +13,8 @@ import java.net.URL;
 
 public class HttpHandler {
     public static String loginEmail = "";
-//    public static String homeName = Home.name;
-//    static String URL = "https://elegant-dove-sombrero.cyclic.app";
-    static String URL = "http://192.168.55.107:8000";
+    static String URL = "https://elegant-dove-sombrero.cyclic.app";
+//    static String URL = "http://192.168.55.107:8000";
 //GET
     public static String getRequest(){
         StringBuilder builder = new StringBuilder();
